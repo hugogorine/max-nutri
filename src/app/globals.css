@@ -1,0 +1,426 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Variantes de estado usadas pelos componentes shadcn/ui (Radix) */
+@custom-variant data-open (&:where([data-state="open"]));
+@custom-variant data-closed (&:where([data-state="closed"]));
+@custom-variant data-checked (&:where([data-state="checked"]));
+@custom-variant data-unchecked (&:where([data-state="unchecked"]));
+@custom-variant data-disabled (&:where([data-disabled]:not([data-disabled="false"])));
+
+/* ---------------------------------------------------------------------------
+   Tokens
+   Paleta: marfim como base, verde profundo como cor de marca, sálvia e rosa
+   só como apoio decorativo, terracota em poucos detalhes.
+--------------------------------------------------------------------------- */
+
+@theme inline {
+  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+  --color-paper: #f8f5ef;
+  --color-paper-deep: #efeae2;
+  --color-backdrop: #ebe5de;
+  --color-ink: #252522;
+  --color-ink-soft: #5a5a53;
+  --color-forest: #31483a;
+  --color-forest-deep: #26382d;
+  --color-sage: #9caf88;
+  --color-sage-light: #c9d4bc;
+  --color-sage-wash: #e6ebdf;
+  --color-clay: #b8755f;
+  --color-clay-deep: #9a5b47;
+  --color-rose: #c98f87;
+  --color-line: rgb(37 37 34 / 0.14);
+  --color-line-strong: rgb(37 37 34 / 0.28);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Escala tipográfica (base 17px, progressão clássica) */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.55;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-lead: clamp(1.125rem, 1.03rem + 0.42vw, 1.3125rem);
+  --text-lead--line-height: 1.55;
+  --text-h3: clamp(1.5rem, 1.32rem + 0.75vw, 2rem);
+  --text-h3--line-height: 1.15;
+  --text-h2: clamp(2.25rem, 1.55rem + 2.9vw, 4rem);
+  --text-h2--line-height: 1.02;
+  --text-display: clamp(2.875rem, 1.45rem + 4.8vw, 5.875rem);
+  --text-display--line-height: 0.95;
+
+  --spacing-gutter: clamp(1.25rem, 4.5vw, 4.5rem);
+  --spacing-section: clamp(6rem, 4rem + 8vw, 11rem);
+  --breakpoint-3xl: 112rem;
+}
+
+/* Tokens semânticos usados pelos componentes do shadcn/ui */
+:root {
+  color-scheme: light;
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --popover: var(--color-paper);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-forest);
+  --primary-foreground: var(--color-paper);
+  --muted: var(--color-paper-deep);
+  --muted-foreground: var(--color-ink-soft);
+  --border: var(--color-line);
+  --input: var(--color-line-strong);
+  --ring: var(--color-forest);
+  --radius: 0.25rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-sage-light);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 3px;
+  }
+
+  .on-dark :focus-visible {
+    outline-color: var(--color-paper);
+  }
+
+  /* Âncoras não ficam escondidas atrás da navegação fixa */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Componentes
+--------------------------------------------------------------------------- */
+
+@layer components {
+  /* Grão de impressão, aplicado por cima das imagens para unir recorte e fundo */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.14 0 0 0 0 0.13 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px;
+    /* Pontos escuros com transparência: o mesmo efeito de um multiply sobre
+       fundo claro, sem o custo de mistura a cada quadro de animação. */
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  /* Link de texto com sublinhado que se redesenha no hover */
+  .link-draw {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 0.2em;
+    transition: background-size 0.5s var(--ease-out-expo);
+  }
+
+  .link-draw:hover {
+    animation: link-redraw 0.7s var(--ease-out-expo);
+  }
+
+  @keyframes link-redraw {
+    0% {
+      background-size: 100% 1px;
+      background-position: 100% 100%;
+    }
+    45% {
+      background-size: 0% 1px;
+      background-position: 100% 100%;
+    }
+    46% {
+      background-position: 0 100%;
+    }
+    100% {
+      background-size: 100% 1px;
+      background-position: 0 100%;
+    }
+  }
+}
+
+/* Texto corrido das políticas */
+@layer components {
+  .legal-prose {
+    max-width: 68ch;
+    color: var(--color-ink-soft);
+  }
+
+  .legal-prose > * + * {
+    margin-top: 1.1em;
+  }
+
+  .legal-prose .lead {
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+
+  .legal-prose h2 {
+    margin-top: 2.75em;
+    font-size: clamp(1.5rem, 1.35rem + 0.6vw, 1.875rem);
+    line-height: 1.2;
+    color: var(--color-forest);
+  }
+
+  .legal-prose h2 + * {
+    margin-top: 0.9em;
+  }
+
+  .legal-prose ul {
+    list-style: disc;
+    padding-left: 1.25em;
+  }
+
+  .legal-prose li + li {
+    margin-top: 0.45em;
+  }
+
+  .legal-prose li::marker {
+    color: var(--color-sage);
+  }
+
+  .legal-prose strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .legal-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-small);
+  }
+
+  .legal-prose th,
+  .legal-prose td {
+    border-bottom: 1px solid var(--color-line);
+    padding: 0.75rem 1rem 0.75rem 0;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .legal-prose th {
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Sequência de entrada da hero
+   Feita em CSS para rodar no primeiro paint, sem esperar o JavaScript.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .hero-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+
+  .hero-line > span {
+    display: block;
+    transform: translateY(108%);
+    animation: hero-rise 1.15s var(--ease-out-expo) forwards;
+    animation-delay: calc(180ms + var(--i, 0) * 95ms);
+  }
+
+  .hero-fade {
+    opacity: 0;
+    transform: translateY(0.75rem);
+    animation: hero-fade 0.9s var(--ease-out-quint) forwards;
+    animation-delay: var(--d, 600ms);
+  }
+
+  .hero-figure {
+    opacity: 0;
+    transform: scale(1.045);
+    transform-origin: 50% 100%;
+    animation: hero-figure 1.5s var(--ease-out-quint) 60ms forwards;
+  }
+
+  .hero-digit {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(14%);
+    animation: hero-digit 1.6s var(--ease-out-expo) forwards;
+    animation-delay: var(--d, 450ms);
+  }
+
+  .hero-rule {
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    animation: hero-rule 1.6s var(--ease-in-out-soft) 700ms forwards;
+  }
+
+  .hero-drift {
+    animation: hero-drift 9s var(--ease-in-out-soft) 2.4s infinite alternate;
+  }
+
+  /* "backwards": depois da entrada, o estilo volta para o Motion animar a saída */
+  .banner-enter {
+    animation: hero-fade-up 0.7s var(--ease-out-quint) 0.9s backwards;
+  }
+
+  @keyframes hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+  }
+
+  @keyframes hero-rise {
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-fade {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-figure {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes hero-digit {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-rule {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes loading-bar {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(300%);
+    }
+  }
+
+  @keyframes hero-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, -6px, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-line > span,
+    .hero-fade,
+    .hero-figure,
+    .hero-digit,
+    .hero-rule {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .hero-drift {
+      animation: none;
+    }
+  }
+}
