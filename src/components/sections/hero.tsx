@@ -153,8 +153,10 @@ export function Hero() {
 function WeekRuler() {
   const weeks = Array.from({ length: 40 }, (_, index) => index + 1);
   const marks = new Set<number>([1, ...trimesters.map((t) => t.start), 40]);
-  // As 40 semanas ocupam 86% da régua; o restante é o pós-parto.
-  const at = (week: number) => ((week - 1) / 39) * 86;
+  // As 40 semanas ocupam 80% da régua; os 20% finais são do pós-parto,
+  // espaço suficiente para o rótulo caber até em telas de 320px.
+  const weeksSpan = 80;
+  const at = (week: number) => ((week - 1) / 39) * weeksSpan;
 
   return (
     <div
@@ -166,16 +168,14 @@ function WeekRuler() {
         {trimesters.map((trimester) => (
           <span
             key={trimester.label}
-            className="absolute top-0 pl-2 text-caption whitespace-nowrap"
+            className="absolute top-0 pl-2 text-[0.6875rem] whitespace-nowrap sm:text-caption"
             style={{ left: `${at(trimester.start)}%` }}
           >
             {trimester.label}
           </span>
         ))}
-        <span
-          className="absolute top-0 text-caption whitespace-nowrap"
-          style={{ left: "89%" }}
-        >
+        {/* Alinhado ao fim da régua: nunca passa da margem da tela */}
+        <span className="absolute top-0 right-0 text-[0.6875rem] whitespace-nowrap sm:text-caption">
           pós-parto
         </span>
 
@@ -198,7 +198,7 @@ function WeekRuler() {
             />
           ))}
           <line
-            x1="89"
+            x1={weeksSpan + 3}
             x2="100"
             y1="12"
             y2="12"
@@ -209,7 +209,10 @@ function WeekRuler() {
             vectorEffect="non-scaling-stroke"
           />
         </svg>
-        <div className="hero-rule absolute bottom-5 left-0 h-px w-[86%] bg-current opacity-60" />
+        <div
+          className="hero-rule absolute bottom-5 left-0 h-px bg-current opacity-60"
+          style={{ width: `${weeksSpan}%` }}
+        />
 
         {[...marks].map((week) => (
           <span
