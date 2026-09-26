@@ -76,7 +76,7 @@ export function Hero() {
                 fill
                 loading="eager"
                 fetchPriority="high"
-                sizes="(min-width: 1024px) 28vw, 60vw"
+                sizes="(min-width: 1024px) 26vw, (min-width: 768px) 44vw, 60vw"
                 className="object-cover object-top lg:object-contain lg:object-bottom"
               />
             </div>

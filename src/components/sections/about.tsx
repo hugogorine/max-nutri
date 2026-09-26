@@ -23,7 +23,7 @@ export function About() {
           <EditorialImage
             src={retrato}
             alt={about.portraitAlt}
-            sizes="(min-width: 768px) 40vw, 100vw"
+            sizes="(min-width: 768px) 38vw, calc(100vw - 2.5rem)"
             className="md:sticky md:top-28"
             frameClassName="aspect-[4/5]"
             imageClassName="object-[50%_30%]"
